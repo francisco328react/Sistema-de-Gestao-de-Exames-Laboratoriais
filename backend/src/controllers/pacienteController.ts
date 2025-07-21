@@ -43,3 +43,32 @@ export async function cadastrarPaciente(req: Request, res: Response): Promise<vo
         return
     }
 }
+
+export async function getPaciente(req: Request, res: Response): Promise<void> {
+    try {
+        console.log("Etrou na busca pelo paciente");
+
+        if (!req.user || typeof req.user.userId !== 'string') {
+            res.status(401).json({ error: "Usuário não autenticado" });
+            return
+        }
+
+        const userId = req.user.userId;
+        console.log("Buscando paciente do userId:", userId);
+
+        const paciente = await prisma.paciente.findFirst({ 
+            where: { userId },
+        });
+
+        if(!paciente) {
+            res.status(404).json({ error: "Paciente não encontrado" });
+            return
+        }
+
+        res.status(200).json(paciente);
+    } catch (error) {
+        console.error("Erro ao buscar paciente", error);
+        res.status(500).json({ error: "Erro interno ao buscar paciente" });
+        return
+    }
+}
