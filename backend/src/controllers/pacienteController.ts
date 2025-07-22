@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export async function cadastrarPaciente(req: Request, res: Response): Promise<void> {
     console.log("Entrou na rota de cadastro");
     
-    const { cpf, dataNasc, telefone, endereco } = req.body;
+    const { cpf, dataNasc, telefone, endereco, name } = req.body;
     console.log("Dados recebido:", {  cpf, dataNasc, telefone, endereco });
 
     const userId = req.user!.userId;
@@ -25,6 +25,7 @@ export async function cadastrarPaciente(req: Request, res: Response): Promise<vo
                 dataNasc: new Date(dataNasc),
                 telefone,
                 endereco,
+                name,
                 userId,
             },
         });
@@ -46,22 +47,51 @@ export async function cadastrarPaciente(req: Request, res: Response): Promise<vo
 
 export async function getPaciente(req: Request, res: Response): Promise<void> {
     try {
-        console.log("Etrou na busca pelo paciente");
+        //console.log("Entrou na busca pelo paciente");
+
+        const userId = (req.user as any)?.userId;
 
         if (!req.user || typeof req.user.userId !== 'string') {
             res.status(401).json({ error: "Usuário não autenticado" });
             return
         }
+        
+        const { name, cpf, telefone, dataNasc, dataInicio, dataFim, endereco, orderByName } = req.query;
+        //console.log("Buscando paciente do userId:", userId);
 
-        const userId = req.user.userId;
-        console.log("Buscando paciente do userId:", userId);
+        let dataNascFiltro: any = undefined;
 
-        const paciente = await prisma.paciente.findFirst({ 
-            where: { userId },
+        if(dataNasc) {
+            dataNascFiltro = new Date(dataNasc as string);
+        }else if(dataInicio && dataFim) {
+            dataNascFiltro = {
+                gte: new Date(dataInicio as string),
+                lte: new Date(dataFim as string),
+            };
+        }
+
+        let orderBy: any = { createdAt: 'desc' };
+
+        if(orderByName === 'asc' || orderByName === 'desc') {
+            orderBy = { name: orderByName };
+        }
+
+        const paciente = await prisma.paciente.findMany({ 
+            where: { 
+                userId,
+                name: name ? { contains: String(name), mode: 'insensitive' } : undefined,
+                cpf: cpf ? String(cpf) : undefined,
+                telefone: telefone ? { contains: String(telefone), mode: 'insensitive' } : undefined,
+                endereco: endereco ? { contains: String(endereco), mode: 'insensitive' } : undefined,
+                dataNasc: dataNascFiltro,
+            },
+            orderBy
         });
 
-        if(!paciente) {
-            res.status(404).json({ error: "Paciente não encontrado" });
+        //console.log("Paciente encontrado:", paciente);
+
+        if(!paciente || paciente.length === 0) {
+            res.status(404).json({ error: "Paciente(s) não encontrado(s)" });
             return
         }
 

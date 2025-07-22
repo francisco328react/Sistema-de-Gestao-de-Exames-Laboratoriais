@@ -3,6 +3,7 @@ CREATE TABLE "Paciente" (
     "id" TEXT NOT NULL,
     "cpf" TEXT NOT NULL,
     "dataNasc" TIMESTAMP(3) NOT NULL,
+    "name" TEXT,
     "telefone" TEXT,
     "endereco" TEXT,
     "userId" TEXT NOT NULL,

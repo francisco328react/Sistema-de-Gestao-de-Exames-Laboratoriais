@@ -33,6 +33,7 @@ model Paciente {
   id          String   @id @default(uuid())
   cpf         String   @unique
   dataNasc    DateTime
+  name        String?
   telefone    String?
   endereco    String?
   userId      String   @unique
