@@ -102,3 +102,57 @@ export async function getPaciente(req: Request, res: Response): Promise<void> {
         return
     }
 }
+
+export async function atualizarPaciente(req: Request, res: Response): Promise<void> {
+    try {
+        const { id } = req.params;
+        const userId = (req.user as any)?.userId;
+        const { name, cpf, dataNasc, telefone, endereco } = req.body;
+
+        const pacienteExiste = await prisma.paciente.findUnique({ where: { id } });
+
+        if(!pacienteExiste || pacienteExiste.userId !== userId) {
+            res.status(404).json({ error: "Paciente não encontrado ou não autorizado" });
+            return
+        }
+
+        const pacienteAtualizado = await prisma.paciente.update({
+            where: { id },
+            data: {
+                name,
+                cpf,
+                dataNasc: dataNasc ? new Date(dataNasc) : undefined,
+                telefone,
+                endereco,
+            },
+        });
+
+        res.status(200).json(pacienteAtualizado);
+    } catch (error) {
+        console.error("Erro ao autalizar paciente:", error);
+        res.status(500).json({ error: "Erro interno ao autalizar paciente" });
+        return
+    }
+}
+
+export async function deletarPaciente(req: Request, res: Response): Promise<void> {
+    try {
+        const { id } = req.params;
+        const userId = (req.user as any)?.userId;
+
+        const paciente = await prisma.paciente.findUnique({ where: { id } });
+
+        if(!paciente || paciente.userId !== userId) {
+            res.status(404).json({ error: "Paciente não encontrado ou não autorizado" });
+            return
+        }
+
+        await prisma.paciente.delete({ where: { id } });
+
+        res.status(200).json({ error: "Paciente deletado com sucesso" });
+    } catch (error) {
+        console.error("Erro ao deletar paciente:", error);
+        res.status(500).json({ error: "Erro interno ao deletar paciente" });
+        return
+    }
+}
