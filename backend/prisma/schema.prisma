@@ -15,14 +15,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   name      String
-  email     String   @unique
+  email     String    @unique
   password  String
-  role      Role     @default(PACIENTE)
+  role      Role      @default(PACIENTE)
   paciente  Paciente?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   medicos   Medico[]
+  exames    Exame[]
 }
 
 enum Role {
@@ -31,15 +32,17 @@ enum Role {
 }
 
 model Paciente {
-  id          String   @id @default(uuid())
-  cpf         String   @unique
-  dataNasc    DateTime
-  name        String?
-  telefone    String?
-  endereco    String?
-  userId      String   @unique
-  user        User     @relation(fields: [userId], references: [id])
-  createdAt   DateTime @default(now())
+  id        String   @id @default(uuid())
+  cpf       String   @unique
+  dataNasc  DateTime
+  name      String?
+  telefone  String?
+  endereco  String?
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  exames Exame[]
 }
 
 model Medico {
@@ -51,4 +54,18 @@ model Medico {
   userId        String
   user          User     @relation(fields: [userId], references: [id])
   createdAt     DateTime @default(now())
+}
+
+model Exame {
+  id         String   @id @default(uuid())
+  nome       String
+  resultado  String
+  data       DateTime
+  pacienteId String
+  paciente   Paciente @relation(fields: [pacienteId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
 }
