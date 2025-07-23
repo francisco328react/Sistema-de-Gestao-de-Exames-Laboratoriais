@@ -31,3 +31,54 @@ export async function createExame(req: Request, res: Response): Promise<void> {
         return
     }
 }
+
+export async function getAllExames(req: Request, res: Response): Promise<void> {
+    try {
+        const exames = await prisma.exame.findMany({
+            include: {
+                paciente: true,
+                user: true,
+            },
+        });
+
+        res.status(200).json(exames);
+        return
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro ao buscar exames" });
+        return
+    }
+}
+
+export async function updateExame(req: Request, res: Response): Promise<void> {
+    const { id } = req.params;
+    const { nome, resultado, data } = req.body;
+
+    try {
+        const exame = await prisma.exame.update({
+            where: { id },
+            data: { nome, resultado, data },
+        });
+
+        res.status(200).json(exame);
+        return
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro ao autalizar exame" });
+        return
+    }
+}
+
+export async function deleteExame(req: Request, res: Response): Promise<void> {
+    const { id } = req.params;
+
+    try {
+        await prisma.exame.delete({ where: { id } });
+        res.status(200).json({ message: "Exame deletado com sucesso" });
+        return
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro ao deletar exame" });
+        return
+    }
+}
