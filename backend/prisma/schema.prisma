@@ -42,18 +42,20 @@ model Paciente {
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 
-  exames Exame[]
+  exames      Exame[]
+  Agendamento Agendamento[]
 }
 
 model Medico {
-  id            String   @id @default(uuid())
+  id            String        @id @default(uuid())
   name          String
-  crm           String   @unique
+  crm           String        @unique
   especialidade String
   telefone      String
   userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  createdAt     DateTime @default(now())
+  user          User          @relation(fields: [userId], references: [id])
+  createdAt     DateTime      @default(now())
+  Agendamento   Agendamento[]
 }
 
 model Exame {
@@ -66,6 +68,21 @@ model Exame {
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime      @default(now())
+  Agendamento Agendamento[]
+}
+
+model Agendamento {
+  id         String   @id @default(uuid())
+  dataHora   DateTime
+  pacienteId String
+  exameId    String
+  medicoId   String? // opcional se algum exame não exigir médico
+
+  paciente Paciente @relation(fields: [pacienteId], references: [id])
+  exame    Exame    @relation(fields: [exameId], references: [id])
+  medico   Medico?  @relation(fields: [medicoId], references: [id])
 
   createdAt DateTime @default(now())
 }
