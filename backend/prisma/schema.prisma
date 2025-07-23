@@ -22,6 +22,7 @@ model User {
   role      Role     @default(PACIENTE)
   paciente  Paciente?
   createdAt DateTime @default(now())
+  medicos   Medico[]
 }
 
 enum Role {
@@ -39,4 +40,15 @@ model Paciente {
   userId      String   @unique
   user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
+}
+
+model Medico {
+  id            String   @id @default(uuid())
+  name          String
+  crm           String   @unique
+  especialidade String
+  telefone      String
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
 }

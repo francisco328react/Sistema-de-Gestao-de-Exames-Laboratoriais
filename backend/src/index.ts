@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes";
 import pacienteRoutes from "./routes/pacienteRoutes";
+import medicoRoutes from "./routes/medicoRoutes";
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 
 app.use(authRoutes);
 app.use(pacienteRoutes);
+app.use(medicoRoutes);
 
 const PORT = process.env.PORT || 3000;
 
