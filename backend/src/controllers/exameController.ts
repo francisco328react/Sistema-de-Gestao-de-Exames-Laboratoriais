@@ -101,3 +101,21 @@ export async function lancarLaudo(req: Request, res: Response): Promise<void> {
         return
     }
 }
+
+export async function updateLaudoExame(req: Request, res: Response): Promise<void> {
+    const { id } = req.params;
+    const { laudo } = req.body;
+
+    try {
+        const exame = await prisma.exame.update({
+            where: { id },
+            data: { laudo },
+        });
+
+        res.status(200).json(exame);
+        return
+    } catch (error) {
+        res.status(500).json({ message: "Erro ao lançar laudo", error });
+        return
+    }
+}
