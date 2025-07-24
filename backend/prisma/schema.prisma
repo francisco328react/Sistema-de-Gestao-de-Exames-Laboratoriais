@@ -69,6 +69,7 @@ model Exame {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
+  laudo       String? 
   createdAt   DateTime      @default(now())
   Agendamento Agendamento[]
 }

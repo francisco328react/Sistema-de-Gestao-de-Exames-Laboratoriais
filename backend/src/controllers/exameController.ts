@@ -82,3 +82,22 @@ export async function deleteExame(req: Request, res: Response): Promise<void> {
         return
     }
 }
+
+export async function lancarLaudo(req: Request, res: Response): Promise<void> {
+    const { id } = req.params;
+    const { laudo } = req.body;
+
+    try {
+        const exame = await prisma.exame.update({
+            where: { id },
+            data: { laudo },
+        });
+
+        res.json({ message: "Laudo lançado com sucesso!", exame });
+        return
+    } catch (error) {
+        console.error("Erro ao lançar laudo", error);
+        res.status(500).json("Erro ao lançar laudo");
+        return
+    }
+}
