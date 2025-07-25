@@ -6,6 +6,7 @@ import pacienteRoutes from "./routes/pacienteRoutes";
 import medicoRoutes from "./routes/medicoRoutes";
 import exameRoutes from "./routes/exameRoutes";
 import agendamentoRoutes from "./routes/agendamentoRoutes";
+import laudoRoutes from "./routes/laudoRoutes";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(pacienteRoutes);
 app.use(medicoRoutes);
 app.use(exameRoutes);
 app.use(agendamentoRoutes);
+app.use(laudoRoutes);
 
 const PORT = process.env.PORT || 3000;
 
