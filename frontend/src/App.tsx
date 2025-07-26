@@ -1,7 +1,10 @@
+import { Router } from "./routes/routes";
+import { AuthProvider } from "./context/AuthContext";
+
 export function App() {
   return (
-    <>
-      <h1>Hello Word</h1>
-    </>
+    <AuthProvider>
+      <Router />
+    </AuthProvider>
   )
 }
