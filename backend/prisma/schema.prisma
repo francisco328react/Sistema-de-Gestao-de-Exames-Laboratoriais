@@ -69,21 +69,29 @@ model Exame {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
-  laudo       String? 
+  laudo       String?
   createdAt   DateTime      @default(now())
   Agendamento Agendamento[]
 }
 
 model Agendamento {
-  id         String   @id @default(uuid())
+  id         Int      @id @default(autoincrement())
   dataHora   DateTime
   pacienteId String
   exameId    String
   medicoId   String? // opcional se algum exame não exigir médico
-
-  paciente Paciente @relation(fields: [pacienteId], references: [id])
-  exame    Exame    @relation(fields: [exameId], references: [id])
-  medico   Medico?  @relation(fields: [medicoId], references: [id])
+  paciente   Paciente @relation(fields: [pacienteId], references: [id])
+  exame      Exame    @relation(fields: [exameId], references: [id])
+  medico     Medico?  @relation(fields: [medicoId], references: [id])
+  laudo      Laudo?   @relation("AgendamentoToLaudo")
 
   createdAt DateTime @default(now())
+}
+
+model Laudo {
+  id            Int         @id @default(autoincrement())
+  conteudo      String
+  agendamentoId Int         @unique
+  agendamento   Agendamento @relation("AgendamentoToLaudo", fields: [agendamentoId], references: [id])
+  criadoEm      DateTime    @default(now())
 }
