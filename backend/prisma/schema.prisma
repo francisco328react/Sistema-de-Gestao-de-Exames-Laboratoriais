@@ -28,6 +28,7 @@ model User {
 
 enum Role {
   ADMIN
+  MEDICO
   PACIENTE
 }
 
@@ -95,3 +96,13 @@ model Laudo {
   agendamento   Agendamento @relation("AgendamentoToLaudo", fields: [agendamentoId], references: [id])
   criadoEm      DateTime    @default(now())
 }
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  email     String   @unique
+  senha     String
+  papel     Role    @default(PACIENTE)
+  criadoEm  DateTime @default(now())
+}
+
